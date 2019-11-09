@@ -13,7 +13,7 @@ export default class App extends Component {
 
   renderList = async () => {
     try {
-      const promise = await fetch(`http://localhost:3005/get`)
+      const promise = await fetch(`https://gregtodolistapi.herokuapp.com/get`)
       this.setState({
         list: await promise.json()
       })
@@ -23,7 +23,7 @@ export default class App extends Component {
 
   saveNew = async (listitem) => {
     try {
-      const apiCall = await fetch(`http://localhost:3005/post`, {
+      const apiCall = await fetch(`https://gregtodolistapi.herokuapp.com/post`, {
         method: 'POST',
         body: JSON.stringify(listitem),
         headers: { 'Content-Type': 'application/JSON', },
@@ -38,7 +38,7 @@ export default class App extends Component {
   update = async (name) => {
     try {
       let id = name.id
-      const update = await fetch(`http://localhost:3005/update/${id}`, {
+      const update = await fetch(`https://gregtodolistapi.herokuapp.com/update/${id}`, {
         method: 'PUT',
         body: JSON.stringify(name),
         headers: { 'Content-Type': 'application/JSON', },

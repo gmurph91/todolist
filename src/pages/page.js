@@ -59,10 +59,10 @@ export default class Page extends Component {
             return (
             <div key={i} className="todolist">
               <h2 className="listheader">{unique[i]}</h2>
-                <h2 className="listheader">To Do:</h2>
+                <h2 className="listheader2">To Do:</h2>
             
                         {this.renderList(unique[i])}
-                <h2 className="listheader">Complete:</h2>
+                <h2 className="listheader2">Complete:</h2>
                         {this.renderList2(unique[i])}
             </div>)
     })} catch (e) {
@@ -123,7 +123,7 @@ export default class Page extends Component {
                 </section>
               </div>
               <form>
-                <h2>New To Do Item</h2>
+                <h2 className="newItem">New To Do Item</h2>
               <div className="field">
                   <label htmlFor="To Do">Title:</label>
                   <input id = "To Do" type = "text" value={this.state.name} onChange={(e)=>{

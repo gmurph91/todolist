@@ -144,10 +144,12 @@ updateItem = (id) => {
         <section className="lists">
           <h3>Lists</h3>
             {this.renderLists()}
+            <img src="plus.png" className="plusSign" alt="add"/>
           </section>
           <section className="items">
             {this.renderItems()}
             {this.renderItems2()}
+            <img src="plus.png" className="plusSign2" alt="add"/>
           </section>
         {/* <form>
           <h2 className="newItem">New To Do Item</h2>

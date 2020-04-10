@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import List from '../components/list';
-// import propTypes from 'prop-types';
+import Popup from "reactjs-popup";
 export default class Page extends Component {
   constructor(props) {
     super(props);
@@ -13,43 +13,13 @@ export default class Page extends Component {
       dueDate: "",
       description: "",
       default: false,
+      open: false,
+      adding: "hidden",
+      selected: "hidden"
     }
   this.completechange = this.completechange.bind(this);
-}
-
-createList = () => {
-  this.props.createList({
-    listName: this.state.listName,
-  })
-}
-
-createItem = () => {
-  this.props.createItem({
-    listID: this.state.listID,
-    itemName: this.state.itemName,
-    dueDate: this.state.dueDate,
-    description: this.state.description,
-    complete: false,
-  })
-}
-
-updateList = (id) => {
-  this.props.updateList({
-    listName: this.state.listName,
-    id: id,
-  })
-}
-
-updateItem = (id) => {
-  this.props.updateItem({
-    listID: this.state.listID,
-    itemName: this.state.itemName,
-    dueDate: this.state.dueDate,
-    description: this.state.description,
-    complete: this.state.complete,
-    id: id
-  })
-}
+  this.handleSubmit = this.handleSubmit.bind(this);
+  }
 
   completechange = async (event) => {
     const id = event.target.id;
@@ -84,6 +54,17 @@ updateItem = (id) => {
     })
   }
 
+  updateItem = (id) => {
+    this.props.updateItem({
+      listID: this.state.listID,
+      itemName: this.state.itemName,
+      dueDate: this.state.dueDate,
+      description: this.state.description,
+      complete: this.state.complete,
+      id: id
+    })
+  }
+
   clicked = (event) => {
     const id = event.target.id;
     var content = document.getElementById(`${id}` + 1);
@@ -92,13 +73,14 @@ updateItem = (id) => {
       content.parentElement.style="margin-bottom: 0px"
     } else {
       content.style.display = "block";
-      content.parentElement.style="margin-bottom: 36px"
+      content.parentElement.style="margin-bottom: 48px"
     }
   }
 
   selectList = (event) => {
     this.setState({
-      listID: event.target.id
+      listID: event.target.id,
+      selected: 'nothidden'
     })
   }
 
@@ -137,48 +119,86 @@ updateItem = (id) => {
     }
   }
 
+  handleSubmit(event) {
+    event.preventDefault();
+    this.setState({ 
+      itemName: this.element.value, 
+      description: this.element2.value,
+      dueDate: this.element3.value, 
+      open: false,
+    });
+    this.addItem(event)
+  }
+
+  addItem = async (event) => {
+    await(this.setState({event}))
+    this.props.createItem({
+      listID:this.state.listID,
+      itemName:this.state.itemName, 
+      description:this.state.description, 
+      dueDate:this.state.dueDate,
+      complete: false,
+    })}
+
+    addList = () => {
+      if(this.state.adding==="hidden"){
+      this.setState({
+        adding: "nothidden"
+      })} else {
+        this.setState({
+          adding: "hidden"
+        })
+      }
+    }
+
+    submitList = () => {
+      this.props.createList({
+        listName:this.state.listName,
+      })
+      this.setState({
+        adding: "hidden",
+        listName: "",
+      })
+    }
 
   render() {
+    const Modal = () => (
+      <Popup
+        trigger={<img src="plus.png" className={`plusSign2 ${this.state.selected}`} alt="add"/>}
+        modal
+        onClose={this.reset}
+      >
+        <span>
+        <form onSubmit={this.handleSubmit}>
+        <label className="newItem">Title:
+          <input type="text" ref={el => this.element = el} />
+        </label>
+        <label className="newItem">Description:
+          <input type="text" ref={el2 => this.element2 = el2} />
+        </label>
+        <label className="newItem">Due date:
+          <input type="text" ref={el3 => this.element3 = el3} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+        </span>
+      </Popup>
+    );
     return (
         <div className="main">
         <section className="lists">
-          <h3>Lists</h3>
             {this.renderLists()}
-            <img src="plus.png" className="plusSign" alt="add"/>
+            <div className={this.state.adding}>
+            <input id="listField" value={this.state.listName} type="text" onKeyUp={(event)=>{if (event.keyCode===13){this.submitList()}}} onChange={(event)=>{this.setState({listName: event.target.value})}}/>
+            <p className="enter">Hit "Enter" to Save</p>
+            </div>
+            <img src="plus.png" className="plusSign" alt="add" onClick={this.addList}/>
           </section>
           <section className="items">
             {this.renderItems()}
             {this.renderItems2()}
-            <img src="plus.png" className="plusSign2" alt="add"/>
+            <Modal />
           </section>
-        {/* <form>
-          <h2 className="newItem">New To Do Item</h2>
-          <div className="field">
-            <label htmlFor="To Do">Title:</label>
-            <input id="To Do" type="text" value={this.state.itemName} onChange={(e) => {
-              this.setState({
-                itemName: e.target.value
-              })
-            }} />
-          </div>
-          <div className="field">
-            <label htmlFor="Description">Description:</label>
-            <input id="Description" type="text" value={this.state.description} onChange={(e) => {
-              this.setState({
-                description: e.target.value
-              })
-            }} />
-          </div>
-          <div className="field">
-            <label htmlFor="due">Due Date:</label>
-            <input id="due" type="text" value={this.state.dueDate} onChange={(e) => {
-              this.setState({
-                dueDate: e.target.value
-              })
-            }} />
-          </div>
-          <input type="button" onClick={this.save} value="Submit" />
-        </form> */}
       </div>
     )
   }
